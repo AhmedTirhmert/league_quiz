@@ -12,10 +12,25 @@
               <th>Correct answer</th>
             </tr>
           </thead>
-          <tbody v-for="(result, index) in results" :key="index">
+          <tbody v-if="quizType == 'Items'">
+            <tr v-for="(result, index) in results" :key="index">
+              <th>
+                <div class="answer-image">
+                  <img v-if="quizType == 'Items'" :src="result.correctAnswer.image" alt="" />
+                </div>
+              </th>
+              <td v-if="quizType == 'Items'" :class="isAnswerCorrect(result, true)">
+                {{ result.userAnswer.name | capitalize }}
+              </td>
+              <td v-if="quizType == 'Items'" :class="isAnswerCorrect(result, true)">
+                {{ result.correctAnswer.name }}
+              </td>
+            </tr>
+          </tbody>
+          <tbody v-else v-for="(result, index) in results" :key="index">
             <tr>
               <th rowspan="2">
-                <div class="spell-image">
+                <div class="answer-image">
                   <img :src="result.correctAnswer.spell.image" alt="" />
                 </div>
               </th>
@@ -63,6 +78,11 @@
 export default {
   name: "endQuiz",
   props: {
+    quizType: {
+      type: String,
+      required: true,
+      default: null,
+    },
     results: {
       type: Array,
       required: true,
@@ -78,24 +98,32 @@ export default {
   },
   methods: {
     isAnswerCorrect(answer, championOrSpell = false) {
-      if (championOrSpell) {
-        return answer.correctAnswer.champion.key == answer.userAnswer.champion.key
-          ? "correct"
-          : "incorrect";
-      } else {
-        return answer.correctAnswer.spell.letter == answer.userAnswer.spellLetter
-          ? "correct"
-          : "incorrect";
+      if (this.quizType == "Spells") {
+        if (championOrSpell) {
+          return answer.correctAnswer.champion.key == answer.userAnswer.champion.key
+            ? "correct"
+            : "incorrect";
+        } else {
+          return answer.correctAnswer.spell.letter == answer.userAnswer.spellLetter
+            ? "correct"
+            : "incorrect";
+        }
+      } else if (this.quizType == "Items") {
+        return answer.correctAnswer.key == answer.userAnswer.key ? "correct" : "incorrect";
       }
     },
     calculateAnswerScore(answer) {
       let score = 0;
-      let championScore =
-        answer.correctAnswer.champion.key == answer.userAnswer.champion.key ? 0.25 : 0;
-      let spellScore =
-        answer.correctAnswer.spell.letter == answer.userAnswer.spellLetter ? 0.75 : 0;
-      score = championScore + spellScore;
-      return score * 10;
+      if (this.quizType == "Spells") {
+        let championScore =
+          answer.correctAnswer.champion.key == answer.userAnswer.champion.key ? true : false;
+        let spellScore =
+          answer.correctAnswer.spell.letter == answer.userAnswer.spellLetter ? true : false;
+        score = championScore && spellScore ? 1 : 0;
+        return score * 10;
+      } else if (this.quizType == "Items") {
+        return answer.correctAnswer.key == answer.userAnswer.key ? 10 : 0;
+      }
     },
     calculateTotalScore() {
       this.results.forEach((answer) => {
@@ -167,17 +195,18 @@ export default {
     padding: 1rem 4rem;
     .result-table {
       max-height: 100%;
+      max-width: 60%;
       overflow: scroll;
-
       table {
         font-size: 0.9rem;
         border-collapse: collapse;
         height: 100%;
+        width: 100%;
         thead {
           tr {
             th,
             td {
-              padding: 0.8em 2em;
+              padding: 0.5rem 0rem;
               border: 1px solid goldenrod;
               letter-spacing: 1px;
               &:nth-child(1) {
@@ -195,7 +224,7 @@ export default {
             }
             th {
               padding: 0.3rem;
-              .spell-image {
+              .answer-image {
                 display: flex;
                 align-items: center;
                 justify-content: center;

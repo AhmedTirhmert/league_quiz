@@ -7,7 +7,7 @@
         ref="quizStart"
         v-if="!isQuizStarted"
       />
-      <end-quiz v-else-if="isQuizFinished" :results="answers" />
+      <end-quiz v-else-if="isQuizFinished" :results="answers" quizType="Spells" />
       <div class="quiz-containner" v-else>
         <b class="countDownBar" ref="countDownBar"></b>
         <h1>Guess the ability bellow!</h1>
@@ -70,19 +70,21 @@
 
 <script>
 import axios from "@/axios";
+import mixin from "@/mixins/quiz.js";
 export default {
   name: "SpellQuiz",
+  mixins: [mixin],
   components: {
-    StartQuiz: () => import("@/components/quiz/start.vue"),
-    EndQuiz: () => import("@/components/quiz/end.vue"),
     ChampionAutoComplete: () => import("@/components/utility/champions/championAutoComplete.vue"),
+  },
+  async created() {
+    await this.getRandomSpells();
   },
   data() {
     return {
-      loadingImageSrc:
-        "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif?cid=ecf05e47pkhri3a1tad77ppt90jolm2sko55j9drip9bcqo6&rid=giphy.gif&ct=g",
-      isQuizStarted: false,
-      randomSpell: { spell: {} },
+      randomSpell: {},
+      randomSpellIndex: 0,
+      randomSpells: [],
       answer: {
         champion: {
           key: "0",
@@ -90,59 +92,35 @@ export default {
         },
         spellLetter: "Q",
       },
-      answers: [],
-      timer: null,
     };
   },
-  mounted() {
-    clearInterval(this.timer);
-  },
   methods: {
-    startQuiz() {
+    async startQuiz() {
       this.isQuizStarted = true;
-      this.getRandomSpell();
+      this.nextSpell();
       this.startTimer();
     },
-    startTimer(seconds = 15) {
-      let timer = seconds;
-      let coef = 100 / timer;
-      this.timer = setInterval(() => {
-        this.$refs.countDownBar.style.width = `${coef * timer}%`;
-        timer--;
-        if (timer < 0) {
-          clearInterval(this.timer);
-          this.$refs.countDownBar.style.width = `100%`;
-          this.submitAnswer();
-        }
-      }, 1000);
-    },
-    async getRandomSpell() {
+    async getRandomSpells() {
       try {
-        let response = await axios.get("/randomSpell");
-        this.checkSpellDuplicate(response.data);
+        let response = await axios.get("/randomSpells");
+        console.log(response.data);
+        this.randomSpells = response.data;
       } catch (error) {
         console.log(error);
       }
     },
-    checkSpellDuplicate(spell) {
-      this.randomSpell = { spell: {} };
-      let spells = this.answers.map((answer) => {
-        return answer.correctAnswer.spell.id;
-      });
-      if (spells.includes(spell.spell.id)) {
-        this.getRandomSpell();
-      } else {
-        this.randomSpell = spell;
-      }
+    nextSpell() {
+      this.randomSpell = this.randomSpells[this.randomSpellIndex];
+      this.randomSpellIndex++;
     },
     submitAnswer() {
-      if (this.answers.length <= 10) {
+      if (this.answers.length <= this.randomSpells.length) {
         this.answers.push({ userAnswer: this.answer, correctAnswer: this.randomSpell.answer });
-        if (this.answers.length <= 10) {
+        if (this.answers.length <= this.randomSpells.length) {
           clearInterval(this.timer);
-          // this.getRandomSpell();
-          // this.startTimer();
-          //  this.resetAnswer();
+          this.nextSpell();
+          this.startTimer();
+          this.resetAnswer();
         }
       }
       if (this.answers.length == 10) {
@@ -157,18 +135,10 @@ export default {
         },
         spellLetter: "Q",
       };
-      this.$children[0].reset()
+      this.$children[0].reset();
     },
     championSelected(champion) {
       this.answer.champion = champion;
-    },
-  },
-  computed: {
-    answersCounter: function () {
-      return this.answers.length + 1;
-    },
-    isQuizFinished: function () {
-      return this.answers.length == 10;
     },
   },
 };

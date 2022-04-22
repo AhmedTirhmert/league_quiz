@@ -37,12 +37,13 @@ export default {
       selectedChampion: new Object(),
     };
   },
-  mounted() {
-    this.loadChampions();
+  async mounted() {
+    await this.loadChampions();
   },
   methods: {
     async loadChampions() {
       const response = await axios.get("loadAutoCompleteChampions");
+      console.log(response);
       this.champions = response.data;
     },
     filterChampions() {
@@ -67,7 +68,7 @@ export default {
     },
     resetSelectedChampion() {
       this.resetFilter();
-      this.championInput = null
+      this.championInput = null;
       this.selectedChampion = new Object();
     },
     selectChampion(champion) {

@@ -1,14 +1,25 @@
 <template>
   <section class="main" id="quiz">
-    <section class="containner">
-      <ul class="quiz-navigation">
-        <router-link class="quiz-navigation-link" :to="{ name: 'Items'    ,hash:'#quiz'}">items</router-link>
+    <section ref="containner" class="containner">
+      <button ref="menuBtn" class="menu-collapse" @click="collapseMenu()">
+        <i class="fas fa-arrows-alt-h"></i>
+      </button>
+      <ul ref="quizNav" class="quiz-navigation">
+        <router-link class="quiz-navigation-link" :to="{ name: 'Items', hash: '#quiz' }"
+          >items</router-link
+        >
 
-        <router-link class="quiz-navigation-link" :to="{ name: 'Spells'   ,hash:'#quiz'}">Spells</router-link>
+        <router-link class="quiz-navigation-link" :to="{ name: 'Spells', hash: '#quiz' }"
+          >Spells</router-link
+        >
 
-        <router-link class="quiz-navigation-link" :to="{ name: 'Quotes'   ,hash:'#quiz'}">ultimates</router-link>
+        <router-link class="quiz-navigation-link" :to="{ name: 'Quotes', hash: '#quiz' }"
+          >ultimates</router-link
+        >
 
-        <router-link class="quiz-navigation-link" :to="{ name: 'Passives' ,hash:'#quiz' }">passives</router-link>
+        <router-link class="quiz-navigation-link" :to="{ name: 'Passives', hash: '#quiz' }"
+          >passives</router-link
+        >
       </ul>
       <section class="quiz-containner">
         <div class="quiz-welcoming" v-if="$route.name == 'Quiz'">
@@ -36,30 +47,66 @@ export default {
     ItemQuiz: () => import("@/components/quiz/item.vue"),
   },
   mounted() {},
+  methods: {
+    collapseMenu() {
+      this.$refs.containner.classList.toggle("menu-collapsed");
+      this.$refs.menuBtn.classList.toggle("menu-btn-collapsed");
+      console.log(this.$refs.containner.classList);
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+.menu-collapsed {
+  grid-template-columns: 0% 100% !important;
+}
+.menu-btn-collapsed {
+  width: 5% !important;
+  border-end-end-radius: 15px;
+}
 .main {
   height: 100vh;
   width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  //   background:  #0b8793;
-  background-image: url("https://image.winudf.com/v2/image/Y29tLmxvbHdhbGxwYXBlci5oZC5sb2xwaWN0dXJlcy5waG90b3MuYmFja2dyb3VuZC5jdXRlLmNvb2wuYXJ0LmxvbGltYWdlcy5oZC5mcmVlX3NjcmVlbl8zXzE1MzEyNjgyNDhfMDgx/screen-3.jpg?fakeurl=1&type=.jpg");
+  // background:  #0b8793;
+  background: linear-gradient(
+    to bottom,
+    #1a2a6c,
+    #b21f1f,
+    #fdbb2d
+  ); /* Chrome 10-25, Safari 5.1-6 */
+
+  // background-image: url("https://image.winudf.com/v2/image/Y29tLmxvbHdhbGxwYXBlci5oZC5sb2xwaWN0dXJlcy5waG90b3MuYmFja2dyb3VuZC5jdXRlLmNvb2wuYXJ0LmxvbGltYWdlcy5oZC5mcmVlX3NjcmVlbl8zXzE1MzEyNjgyNDhfMDgx/screen-3.jpg?fakeurl=1&type=.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   background-blend-mode: screen;
   .containner {
+    position: relative;
     height: 92%;
     width: 96%;
     display: grid;
-    grid-template-columns: 3fr 9fr;
+    grid-template-columns: 20% 80%;
     background: rgba($color: rgb(187, 187, 187), $alpha: 0.7);
     border-radius: 15px;
     overflow: hidden;
+    transition:all 0.9s ease-in-out;
+    .menu-collapse {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      cursor: pointer;
+      width: 20%;
+      height: 2rem;
+      background: #cfcfcf;
+      outline: none;
+      border: none;
+    }
+
     .quiz-navigation {
       list-style: none;
       display: flex;
@@ -74,6 +121,7 @@ export default {
       text-transform: capitalize;
       overflow: hidden;
       position: relative;
+      transition: all .3s ease-in-out;
       &::before {
         content: "";
         background: #222222;
@@ -82,7 +130,13 @@ export default {
         left: 0;
         height: 100%;
         width: 100%;
-        background-image: url("https://i.pinimg.com/originals/6a/49/7b/6a497bc402f3f5a1479696657cc2f964.jpg");
+        background: linear-gradient(
+          to left,
+          #3c3b3f,
+          #605c3c
+        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        // background-image: url("https://i.pinimg.com/originals/6a/49/7b/6a497bc402f3f5a1479696657cc2f964.jpg");
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -98,7 +152,7 @@ export default {
         left: 0;
         height: 100%;
         width: 100%;
-        opacity: 0.7;
+        opacity: 0.5;
         z-index: 1;
       }
       .quiz-navigation-link {
@@ -127,7 +181,13 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba($color: rgb(41, 41, 41), $alpha: 0.7);
+      background: radial-gradient(
+        ellipse at top,
+        #485563,
+        #29323c
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+      // background: rgba($color: rgb(41, 41, 41), $alpha: 0.7);
       color: whitesmoke;
       height: 100%;
       .quiz-welcoming {
