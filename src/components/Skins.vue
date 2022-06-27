@@ -5,7 +5,7 @@
     id="skins"
   >
     <!-- <img class="skin-splash" :src="currentSkin.splash" alt="aatrox" /> -->
-    <h1 class="welcoming">LEAGUE QUIZ</h1>
+    <!-- <h1 class="welcoming">LEAGUE QUIZ</h1> -->
     <champion-drop-down @loadChampSkins="loadChampSkins" />
     <span class="glassyBlur"></span>
     <div class="controls" @click="prevSkin">
