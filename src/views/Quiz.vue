@@ -14,11 +14,11 @@
         >
 
         <router-link class="quiz-navigation-link" :to="{ name: 'Quotes', hash: '#quiz' }"
-          >ultimates</router-link
+          >Quotes</router-link
         >
 
-        <router-link class="quiz-navigation-link" :to="{ name: 'Passives', hash: '#quiz' }"
-          >passives</router-link
+        <router-link class="quiz-navigation-link" :to="{ name: 'Vocals', hash: '#quiz' }"
+          >Vocals</router-link
         >
       </ul>
       <section class="quiz-containner">
@@ -28,10 +28,10 @@
           <small>select a quiz to start playing</small><br />
           <i class="fas fa-arrow-left"></i>
         </div>
-        <passive-quiz v-if="$route.name == 'Passives'" />
         <spell-quiz v-if="$route.name == 'Spells'" />
         <item-quiz v-if="$route.name == 'Items'" />
         <quoat-quiz v-if="$route.name == 'Quotes'" />
+        <vocals-quiz v-if="$route.name == 'Vocals'" />
       </section>
     </section>
   </section>
@@ -41,7 +41,7 @@
 export default {
   name: "Quiz",
   components: {
-    PassiveQuiz: () => import("@/components/quiz/passive.vue"),
+    VocalsQuiz: () => import("@/components/quiz/vocal.vue"),
     SpellQuiz: () => import("@/components/quiz/spell.vue"),
     QuoatQuiz: () => import("@/components/quiz/quoat.vue"),
     ItemQuiz: () => import("@/components/quiz/item.vue"),

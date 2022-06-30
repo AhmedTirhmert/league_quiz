@@ -1,6 +1,6 @@
 <template>
   <div class="quiz-main">
-    <start-quiz :quizType="'Passives'" />
+    <start-quiz :quizType="'Vocals'" />
   </div>
 </template>
 

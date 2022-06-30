@@ -8,44 +8,61 @@
           <thead>
             <tr>
               <th></th>
-              <th>Your answer</th>
               <th>Correct answer</th>
+              <th>Your answer</th>
             </tr>
           </thead>
-          <tbody v-if="quizType == 'Items'">
+
+          <tbody v-if="quizType == 'Spells'">
+            {{resultss}}
+            <tr v-for="(result, index) in results" :key="index">
+              <th rowspan="2">
+                <div class="answer-image">
+                  <img :src="result.correctAnswer.spell.image" alt="" />
+                </div>
+              </th>
+              <td class="correct">
+                {{ result.correctAnswer.champion.name }}
+              </td>
+              <td :class="isAnswerCorrect(result, true)">
+                {{ result.userAnswer.champion.name | capitalize }}
+              </td>
+            </tr>
+            <tr>
+              <td class="correct">{{ result.correctAnswer.spell.letter }}</td>
+              <td :class="isAnswerCorrect(result)">
+                {{ result.userAnswer.spellLetter }}
+              </td>
+            </tr>
+          </tbody>
+          <tbody v-else-if="quizType == 'Quotes'">
+            <tr v-for="(result, index) in results" :key="index">
+              <th>
+                <div class="answer-image">
+                  <h5 class="quote">{{ result.correctAnswer.quote | trim(30) }}</h5>
+                </div>
+              </th>
+              <td class="correct">
+                {{ result.correctAnswer.champion.name }}
+              </td>
+              <td :class="isAnswerCorrect(result, true)">
+                {{ result.userAnswer.champion.name | capitalize }}
+              </td>
+            </tr>
+          </tbody>
+          <tbody v-else>
             <tr v-for="(result, index) in results" :key="index">
               <th>
                 <div class="answer-image">
                   <img v-if="quizType == 'Items'" :src="result.correctAnswer.image" alt="" />
                 </div>
               </th>
+              <td v-if="quizType == 'Items'" class="correct">
+                {{ result.correctAnswer.name }}
+              </td>
               <td v-if="quizType == 'Items'" :class="isAnswerCorrect(result, true)">
                 {{ result.userAnswer.name | capitalize }}
               </td>
-              <td v-if="quizType == 'Items'" :class="isAnswerCorrect(result, true)">
-                {{ result.correctAnswer.name }}
-              </td>
-            </tr>
-          </tbody>
-          <tbody v-else v-for="(result, index) in results" :key="index">
-            <tr>
-              <th rowspan="2">
-                <div class="answer-image">
-                  <img :src="result.correctAnswer.spell.image" alt="" />
-                </div>
-              </th>
-              <td :class="isAnswerCorrect(result, true)">
-                {{ result.userAnswer.champion.name | capitalize }}
-              </td>
-              <td :class="isAnswerCorrect(result, true)">
-                {{ result.correctAnswer.champion.name }}
-              </td>
-            </tr>
-            <tr>
-              <td :class="isAnswerCorrect(result)">
-                {{ result.userAnswer.spellLetter }}
-              </td>
-              <td :class="isAnswerCorrect(result)">{{ result.correctAnswer.spell.letter }}</td>
             </tr>
           </tbody>
         </table>
@@ -95,6 +112,7 @@ export default {
   mounted() {
     this.calculateTotalScore();
     this.fillTotalScoreCircle();
+    console.log(this.results);
   },
   methods: {
     isAnswerCorrect(answer, championOrSpell = false) {
@@ -108,7 +126,11 @@ export default {
             ? "correct"
             : "incorrect";
         }
-      } else if (this.quizType == "Items") {
+      } else if (this.quizType == "Quotes") {
+        return answer.correctAnswer.champion.key == answer.userAnswer.champion.key
+          ? "correct"
+          : "incorrect";
+      } else {
         return answer.correctAnswer.key == answer.userAnswer.key ? "correct" : "incorrect";
       }
     },
@@ -121,7 +143,9 @@ export default {
           answer.correctAnswer.spell.letter == answer.userAnswer.spellLetter ? true : false;
         score = championScore && spellScore ? 1 : 0;
         return score * 10;
-      } else if (this.quizType == "Items") {
+      } else if (this.quizType == "Quotes") {
+        return answer.correctAnswer.champion.key == answer.userAnswer.champion.key ? 10 : 0;
+      } else {
         return answer.correctAnswer.key == answer.userAnswer.key ? 10 : 0;
       }
     },
@@ -132,14 +156,17 @@ export default {
       this.score = Math.round(this.score);
     },
     fillTotalScoreCircle() {
-      const circle = document.querySelector("#score-circle");
-      const circleDasharray = parseInt(window.getComputedStyle(circle).strokeDasharray);
-      circle.style.strokeDashoffset = `${circleDasharray - (this.score * circleDasharray) / 100}px`;
+      // const circle = document.querySelector("#score-circle");
+      // const circleDasharray = parseInt(window.getComputedStyle(circle).strokeDasharray);
+      // circle.style.strokeDashoffset = `${circleDasharray - (this.score * circleDasharray) / 100}px`;
     },
   },
   filters: {
     capitalize(value) {
       return value.charAt(0).toUpperCase() + value.toLowerCase().slice(1);
+    },
+    trim(value, count) {
+      return `${value.slice(0, count - 3)}...`;
     },
   },
   computed: {

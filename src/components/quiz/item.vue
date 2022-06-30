@@ -2,7 +2,7 @@
   <div class="quiz-main">
     <transition name="fade" mode="out-in" appear :duration="2">
       <start-quiz
-        :quizType="'Spells'"
+        :quizType="'Items'"
         @startQuiz="startQuiz"
         ref="quizStart"
         v-if="!isQuizStarted"

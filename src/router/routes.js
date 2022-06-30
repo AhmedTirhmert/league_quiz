@@ -29,8 +29,8 @@ const routes = [
     component: () => import(/* webpackChunkName: "Quiz" */ "../views/Quiz.vue"),
   },
   {
-    path: "/quiz/passives",
-    name: "Passives",
+    path: "/quiz/vocals",
+    name: "Vocals",
     component: () => import(/* webpackChunkName: "Quiz" */ "../views/Quiz.vue"),
   },
   {
